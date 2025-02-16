@@ -46,5 +46,5 @@ def test_outdated_products_for_different_datetime_now(
         today: datetime.date,
         expired_product_names: list[str]
 ) -> None:
-    with mock.patch("datetime.date.today", return_value = today):
+    with mock.patch("datetime.date.today", return_value=today):
         assert outdated_products(products) == expired_product_names
