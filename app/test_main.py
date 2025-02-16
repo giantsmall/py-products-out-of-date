@@ -1,11 +1,17 @@
+from unittest import mock
 from app.main import outdated_products
 import pytest
 import datetime
 import time_machine
 
 
+@pytest.fixture
+def mock_time_date():
+    with mock.patch("datetime.date.today") as mock_dt:
+        yield mock_dt
+
 @pytest.mark.parametrize(
-    "products,mock_today,expired_product_names",
+    "products,today,expired_product_names",
     [
         (
             [
@@ -42,9 +48,16 @@ import time_machine
     ]
 )
 def test_outdated_products_for_different_datetime_now(
+        mock_dt,
         products: list,
-        mock_today: datetime.date,
+        today: datetime.date,
         expired_product_names: list[str]
 ) -> None:
-    with time_machine.travel(mock_today):
-        assert outdated_products(products) == expired_product_names
+    mock_dt.return_value = today
+    assert outdated_products(products) == expired_product_names
+
+
+# @mock.patch("datetime.date.today")
+# def test_outdated_products_for_different_datetime_now(mock_dt, products: list, today: datetime.date, expired_product_names: list[str]) -> None:
+#     mock_dt.return_value = today
+#     assert outdated_products(products) == expired_product_names
